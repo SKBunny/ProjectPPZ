@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Історія читання - Бібліотека{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Історія читання</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Книга</th>
+            <th>Автор</th>
+            <th>Дата перегляду</th>
+            <th>Дії</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for entry in history %}
+        <tr>
+            <td>{{ entry.book.title }}</td>
+            <td>{{ entry.book.author }}</td>
+            <td>{{ entry.read_at|date:"d.m.Y H:i" }}</td>
+            <td>
+                <a href="{% url 'book_detail' entry.book.id %}" class="btn btn-sm btn-outline-primary">Переглянути</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4" class="text-center">Ваша історія читання порожня.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

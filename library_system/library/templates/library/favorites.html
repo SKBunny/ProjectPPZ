@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Обрані книги - Бібліотека{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Обрані книги</h1>
+
+<div class="row">
+    {% for favorite in favorites %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            {% if favorite.book.cover_image %}
+            <img src="{{ favorite.book.cover_image.url }}" class="card-img-top" alt="{{ favorite.book.title }}">
+            {% else %}
+            <div class="card-img-top bg-secondary text-white text-center" style="height: 200px; display: flex; align-items: center; justify-content: center;">
+                <p>Немає обкладинки</p>
+            </div>
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ favorite.book.title }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{ favorite.book.author }}</h6>
+                {% if favorite.book.genre %}<p class="badge bg-secondary">{{ favorite.book.genre.name }}</p>{% endif %}
+                <p class="card-text">{{ favorite.book.description|truncatechars:100 }}</p>
+                <a href="{% url 'book_detail' favorite.book.id %}" class="btn btn-sm btn-outline-primary">Детальніше</a>
+                <a href="{% url 'remove_from_favorites' favorite.book.id %}" class="btn btn-sm btn-danger">Видалити з обраного</a>
+            </div>
+            <div class="card-footer text-muted">
+                Додано: {{ favorite.added_at|date:"d.m.Y H:i" }}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <p>У вас поки немає обраних книг.</p>
+        <a href="{% url 'book_list' %}" class="btn btn-primary">Перейти до каталогу книг</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
