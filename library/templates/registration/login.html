@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+<!-- Сторінка входу в систему для зареєстрованих користувачів -->
+
+{% block title %}Вхід - Бібліотека{% endblock %}
+
+{% block content %}
+<!-- Центроване розташування форми входу -->
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <!-- Заголовок карти з формою входу -->
+            <div class="card-header">
+                <h2 class="text-center">Вхід</h2>
+            </div>
+
+            <!-- Основна частина з формою входу -->
+            <div class="card-body">
+                <form method="post">
+                    <!-- CSRF токен для безпеки -->
+                    {% csrf_token %}
+
+                    <!-- Цикл по всіх полях форми (username, password) -->
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <!-- Лейбл для поля -->
+                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                        <!-- Саме поле форми -->
+                        {{ field }}
+
+                        <!-- Допоміжний текст для поля (якщо є) -->
+                        {% if field.help_text %}
+                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                        {% endif %}
+
+                        <!-- Відображення помилок валідації для кожного поля -->
+                        {% for error in field.errors %}
+                        <div class="alert alert-danger">
+                            {{ error }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+
+                    <!-- Кнопка підтвердження входу -->
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Увійти</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Футер з посиланням на реєстрацію -->
+            <div class="card-footer text-center">
+                <p>Ще не зареєстровані? <a href="{% url 'register' %}">Зареєструватися</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

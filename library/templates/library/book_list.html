@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+<!-- Сторінка каталогу всіх книг з функціями пошуку та фільтрації -->
+
+{% block title %}Усі книги - Бібліотека{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Усі книги</h1>
+
+<!-- Панель пошуку та фільтрації -->
+<div class="row mb-4">
+    <!-- Форма пошуку книг -->
+    <div class="col-md-6">
+        <form method="get" class="form-inline">
+            <div class="input-group">
+                <input type="text" class="form-control" name="query" placeholder="Пошук книг..." value="{{ search_query|default:'' }}">
+                <button class="btn btn-outline-primary" type="submit">Пошук</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Випадаючий список фільтрації за жанрами -->
+    <div class="col-md-6">
+        <div class="dropdown text-md-end">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="genreDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <!-- Відображення поточного вибраного жанру -->
+                {% if current_genre %}
+                    {% for genre in genres %}
+                        {% if genre.id == current_genre %}
+                            {{ genre.name }}
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    Усі жанри
+                {% endif %}
+            </button>
+            <!-- Список доступних жанрів для фільтрації -->
+            <ul class="dropdown-menu" aria-labelledby="genreDropdown">
+                <li><a class="dropdown-item" href="{% url 'book_list' %}">Усі жанри</a></li>
+                {% for genre in genres %}
+                <li><a class="dropdown-item" href="{% url 'book_list' %}?genre={{ genre.id }}">{{ genre.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Грід відображення книг -->
+<div class="row">
+    {% for book in books %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <!-- Зображення обкладинки або заглушка -->
+            {% if book.cover_image %}
+            <img src="{{ book.cover_image.url }}" class="card-img-top" alt="{{ book.title }}">
+            {% else %}
+            <div class="card-img-top bg-secondary text-white text-center" style="height: 200px; display: flex; align-items: center; justify-content: center;">
+                <p>Немає обкладинки</p>
+            </div>
+            {% endif %}
+
+            <!-- Інформація про книгу на картці -->
+            <div class="card-body">
+                <h5 class="card-title">{{ book.title }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{ book.author }}</h6>
+                <!-- Бейдж жанру -->
+                {% if book.genre %}<p class="badge bg-secondary">{{ book.genre.name }}</p>{% endif %}
+                <!-- Скорочений опис книги -->
+                <p class="card-text">{{ book.description|truncatechars:100 }}</p>
+
+                <!-- Кнопка переходу до детальної сторінки -->
+                <a href="{% url 'book_detail' book.id %}" class="btn btn-sm btn-outline-primary">Детальніше</a>
+
+                <!-- Статус наявності книги -->
+                {% if book.available %}
+                <span class="badge bg-success">В наявності</span>
+                {% else %}
+                <span class="badge bg-danger">Немає в наявності</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <!-- Повідомлення коли книги не знайдені -->
+    <div class="col-12">
+        <p>Книг не знайдено.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

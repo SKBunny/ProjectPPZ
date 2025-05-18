@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Встановлює заголовок сторінки з можливістю перевизначення в дочірніх шаблонах -->
+    <title>{% block title %}Бібліотека{% endblock %}</title>
+    <!-- Підключення CSS фреймворку Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Навігаційна панель з темною темою -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <!-- Логотип/назва сайту з посиланням на головну сторінку -->
+            <a class="navbar-brand" href="{% url 'home' %}">Бібліотека</a>
+            <!-- Кнопка для мобільного меню -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- Основні посилання навігації -->
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">Головна</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'book_list' %}">Усі книги</a>
+                    </li>
+                    <!-- Посилання доступні тільки для авторизованих користувачів -->
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'favorites_list' %}">Обране</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'reading_history' %}">Історія читання</a>
+                    </li>
+                    {% endif %}
+                </ul>
+                <!-- Правий блок навігації з інформацією про користувача -->
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                    <!-- Привітання для авторизованого користувача -->
+                    <li class="nav-item">
+                        <span class="nav-link">Вітаємо, {{ user.username }}</span>
+                    </li>
+                    <!-- Кнопка виходу з системи -->
+                    <li class="nav-item">
+                        <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="nav-link btn btn-link text-decoration-none" style="padding: 0; border: none; background: none;">
+                                Вихід
+                            </button>
+                        </form>
+                    </li>
+                    {% else %}
+                    <!-- Посилання для неавторизованих користувачів -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Вхід</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'register' %}">Реєстрація</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Основний контент сторінки -->
+    <div class="container mt-4">
+        <!-- Відображення системних повідомлень (успіх, помилка тощо) -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Блок для контенту дочірніх шаблонів -->
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Футер сторінки -->
+    <footer class="bg-dark text-white mt-5 py-3">
+        <div class="container text-center">
+            <!-- Автоматичне відображення поточного року -->
+            <p>© {% now "Y" %} Бібліотечна система. Всі права захищено.</p>
+        </div>
+    </footer>
+
+    <!-- Підключення JavaScript файлів Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

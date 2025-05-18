@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+<!-- Головна сторінка бібліотеки з привітанням, новинками та жанрами -->
+
+{% block title %}Головна - Бібліотека{% endblock %}
+
+{% block content %}
+<!-- Героїчна секція з привітанням -->
+<div class="jumbotron">
+    <h1 class="display-4">Ласкаво просимо до нашої бібліотеки!</h1>
+    <p class="lead">Знайдіть свою наступну улюблену книгу в нашій колекції.</p>
+    <hr class="my-4">
+    <!-- Головна кнопка переходу до каталогу -->
+    <a class="btn btn-primary btn-lg" href="{% url 'book_list' %}" role="button">Переглянути всі книги</a>
+</div>
+
+<!-- Секція нових надходжень -->
+<h2 class="mt-5 mb-4">Нові надходження</h2>
+<div class="row">
+    {% for book in books %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <!-- Зображення обкладинки або заглушка -->
+            {% if book.cover_image %}
+            <img src="{{ book.cover_image.url }}" class="card-img-top" alt="{{ book.title }}">
+            {% else %}
+            <div class="card-img-top bg-secondary text-white text-center" style="height: 200px; display: flex; align-items: center; justify-content: center;">
+                <p>Немає обкладинки</p>
+            </div>
+            {% endif %}
+
+            <!-- Інформація про нову книгу -->
+            <div class="card-body">
+                <h5 class="card-title">{{ book.title }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{ book.author }}</h6>
+                <!-- Скорочений опис -->
+                <p class="card-text">{{ book.description|truncatechars:100 }}</p>
+                <!-- Кнопка до детальної інформації -->
+                <a href="{% url 'book_detail' book.id %}" class="btn btn-sm btn-outline-primary">Детальніше</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <!-- Повідомлення коли нових книг немає -->
+    <div class="col-12">
+        <p>На даний момент книги відсутні.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Секція швидкого доступу до жанрів -->
+<h2 class="mt-5 mb-4">Жанри</h2>
+<div class="row">
+    {% for genre in genres %}
+    <div class="col-md-3 mb-3">
+        <!-- Кнопка-посилання для фільтрації за жанром -->
+        <a href="{% url 'book_list' %}?genre={{ genre.id }}" class="btn btn-outline-secondary w-100">{{ genre.name }}</a>
+    </div>
+    {% empty %}
+    <!-- Повідомлення коли жанрів немає -->
+    <div class="col-12">
+        <p>Жанри відсутні.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+<!-- Сторінка історії читання користувача (перегляданих книг) -->
+
+{% block title %}Історія читання - Бібліотека{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Історія читання</h1>
+
+<!-- Таблиця з історією переглядів книг -->
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Книга</th>
+            <th>Автор</th>
+            <th>Дата перегляду</th>
+            <th>Дії</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Рядки з записами історії читання -->
+        {% for entry in history %}
+        <tr>
+            <td>{{ entry.book.title }}</td>
+            <td>{{ entry.book.author }}</td>
+            <!-- Форматована дата останнього перегляду -->
+            <td>{{ entry.read_at|date:"d.m.Y H:i" }}</td>
+            <td>
+                <!-- Кнопка повторного перегляду книги -->
+                <a href="{% url 'book_detail' entry.book.id %}" class="btn btn-sm btn-outline-primary">Переглянути</a>
+            </td>
+        </tr>
+        {% empty %}
+        <!-- Повідомлення коли історія порожня -->
+        <tr>
+            <td colspan="4" class="text-center">Ваша історія читання порожня.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
